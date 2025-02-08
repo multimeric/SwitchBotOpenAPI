@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  title: SwitchBot API
+  version: '1.1'
+servers:
+  - url: https://api.switch-bot.com
+paths:
+  /v1.1/devices:
+    get:
+      summary: Get device list
+      description: Get a list of devices, which include physical devices and virtual infrared remote devices that have been added to the current user's account.
+      responses:
+        '200':
+          description: A list of devices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  message:
+                    type: string
+                  body:
+                    type: object
+                    properties:
+                      deviceList:
+                        type: array
+                        items:
+                          oneOf:
+                            - $ref: '#/components/schemas/Curtain'
+                            - $ref: '#/components/schemas/Device'
+                          discriminator:
+                            propertyName: deviceType
+                            mapping:
+                              Bot: '#/components/schemas/Device'
+                              Curtain: '#/components/schemas/Curtain'
+                              Curtain3: '#/components/schemas/Curtain'
+                              Hub: '#/components/schemas/Device'
+                              Hub Plus: '#/components/schemas/Device'
+                              Hub Mini: '#/components/schemas/Device'
+                              Hub 2: '#/components/schemas/Device'
+                              Meter: '#/components/schemas/Device'
+                              MeterPlus: '#/components/schemas/Device'
+                              WoIOSensor: '#/components/schemas/Device'
+                              MeterPro: '#/components/schemas/Device'
+                              MeterPro(CO2): '#/components/schemas/Device'
+                              Lock: '#/components/schemas/Lock'
+                              Smart Lock Pro: '#/components/schemas/Lock'
+                              Keypad: '#/components/schemas/Keypad'
+                              Keypad Touch: '#/components/schemas/Keypad'
+                              Remote: '#/components/schemas/Device'
+                              Motion Sensor: '#/components/schemas/Device'
+                              Compact Sensor: '#/components/schemas/Device'
+                              Water Leak Detector: '#/components/schemas/Device'
+                              Ceiling Light: '#/components/schemas/Device'
+                              Celing Light Pro: '#/components/schemas/Device'
+                              Plug Mini (US): '#/components/schemas/Device'
+                              Plug Mini (JP): '#/components/schemas/Device'
+                              Plug: '#/components/schemas/Device'
+                              Strip Light: '#/components/schemas/Device'
+                              Color Bulb: '#/components/schemas/Device'
+                              Robot Vacuum Cleaner S1: '#/components/schemas/Device'
+                              Robot Vacuum Cleaner S1 Plus: '#/components/schemas/Device'
+                              K10+: '#/components/schemas/Device'
+                              K10+ Pro: '#/components/schemas/Device'
+                              Robot Vacuum Cleaner K10+ Pro Combo: '#/components/schemas/Device'
+                              Robot Vacuum Cleaner S10: '#/components/schemas/Device'
+                              Humidifier: '#/components/schemas/Device'
+                              Humidifier2: '#/components/schemas/Device'
+                              Air Purifier VOC: '#/components/schemas/Device'
+                              Air Purifier Table VOC: '#/components/schemas/Device'
+                              Air Purifier PM2.5: '#/components/schemas/Device'
+                              Air Purifier Table PM2.5: '#/components/schemas/Device'
+                              Indoor Cam: '#/components/schemas/Device'
+                              Pan/Tilt Cam: '#/components/schemas/Device'
+                              Blind Tilt: '#/components/schemas/BlindTilt'
+                              Battery Circulator Fan: '#/components/schemas/Device'
+                              Circulator Fan: '#/components/schemas/Device'
+                              Roller Shade: '#/components/schemas/RollerShade'
+                              Relay Switch 1PM: '#/components/schemas/Device'
+                              Relay Switch 1: '#/components/schemas/Device'
+                      infraredRemoteList:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/InfraredRemote'
+  /v1.1/devices/{deviceId}/status:
+    get:
+      summary: Get device status
+      description: Get the status of a physical device that has been added to the current user's account.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The status of the device
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  message:
+                    type: string
+                  body:
+                    type: object
+                    properties:
+                      deviceId:
+                        type: string
+                      deviceType:
+                        type: string
+  /v1.1/devices/{deviceId}/commands:
+    post:
+      summary: Send device control commands
+      description: Send control commands to physical devices and virtual infrared remote devices.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                commandType:
+                  type: string
+                command:
+                  type: string
+                parameter:
+                  type: string
+      responses:
+        '200':
+          description: Command sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  message:
+                    type: string
+components:
+  schemas:
+    BaseDevice:
+      type: object
+      properties:
+        deviceId:
+          type: string
+        deviceType:
+          type: string
+        hubDeviceId:
+          type: string
+          description: device's parent Hub ID
+    Device:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        deviceName:
+          type: string
+        enableCloudService:
+          type: boolean
+          description: determines if Cloud Service is enabled or not for the current device
+    InfraredRemote:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        remoteType:
+          type: string
+    Curtain:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        curtainDeviceIds:
+          type: array
+          items:
+            type: string
+          description: a list of Curtain device IDs such that the Curtain devices are being paired or grouped
+        calibrate:
+          type: boolean
+          description: determines if the open position and the close position of a device have been properly calibrated or not
+        group:
+          type: boolean
+          description: determines if a Curtain is paired with or grouped with another Curtain or not
+        master:
+          type: boolean
+          description: determines if a Curtain is the master device or not when paired with or grouped with another Curtain
+        openDirection:
+          type: string
+          description: the opening direction of a Curtain
+    Lock:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        group:
+          type: boolean
+          description: determines if a Lock is grouped with another Lock or not
+        master:
+          type: boolean
+          description: determines if a Lock is the master device or not when grouped with another Lock in Dual Lock mode
+        groupName:
+          type: string
+          description: the name of the Lock group
+        lockDevicesIds:
+          type: array
+          items:
+            type: string
+          description: a list of Lock device IDs such that the Lock devices are being grouped in Dual Lock mode
+    Keypad:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        lockDevicesId:
+          type: string
+          description: MAC address of the Lock that the current device is paired with
+        keyList:
+          type: 
+            $ref: '#/components/schemas/KeyList'
+          description: a list of passcodes
+      KeyList:
+        type: object
+        properties:
+          id:
+            type: string
+            description: passcode ID
+          name:
+            type: string
+            description: name of the passcode
+          type:
+            type: string
+            description: |
+              type of the passcode 
+              * permanent: a permanent passcode
+              * timeLimit: a temporary passcode
+              * disposable: a one-time passcode
+              * urgent: an emergency passcode.
+            enum: [permanent, timeLimit, disposable, urgent]
+          password:
+            type: string
+            description: the passcode string encrypted with the developer secret key using the aes-128-cbc algorithm
+          iv:
+            type: string
+            description: an arbitrary number used for the encryption
+          status:
+            type: string
+            description: |
+              validity of the passcode.
+              * normal: the passcode is valid
+              * expired: the passcode is invalid.
+            enum: [normal, expired]
+          createTime:
+            type: integer
+            description: the time when the passcode is generated
+    BlindTilt:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        blindTiltDevicesIds:
+          type: array
+          items:
+            type: string
+          description: a list of Blind Tilt device IDs such that the Blind Tilt devices are being paired or grouped
+        calibrate:
+          type: boolean
+          description: determines if the open and the closed positions have been properly calibrated or not
+        group:
+          type: boolean
+          description: determines if a Blind Tilt device is paired with or grouped with one or more devices of the same type or not
+        master:
+          type: boolean
+          description: determines if a Blind Tilt device is the master device or not when paired with or grouped with one or more devices of the same type
+        direction:
+          type: string
+          description: the opening direction of a Blind Tilt device
+        slidePosition:
+          type: number
+          description: the current position
+          minimum: 0
+          maximum: 100
+    Roller Shade:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        bleVersion:
+          type: string
+          description: firmware version
+        groupingDevicesIds:
+          type: array
+          items:
+            type: string
+          description: a list of device IDs such that the Roller Shade devices are being paired or grouped
+        group:
+          type: boolean
+          description: determines if a device is paired with or grouped with one or more devices of the same type or not
+        master:
+          type: boolean
+          description: determines if a device is the master device or not when paired with or grouped with one or more devices of the same type
+        groupName:
+          type: string
+          description: the name of the device group
+        
+
+    MeterPlusStatus:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        version:
+          type: string
+        temperature:
+          type: number
+        battery:
+          type: number
+        humidity:
+          type: number
+    Hub2Status:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+      properties:
+        version:
+          type: string
+        temperature:
+          type: number
+        lightLevel:
+          type: number
+        humidity:
+          type: number
+      

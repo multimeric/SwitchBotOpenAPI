@@ -456,41 +456,41 @@ components:
         keyList:
           $ref: '#/components/schemas/KeyList'
 
-      KeyList:
-        type: object
-        description: a list of passcodes
-        properties:
-          id:
-            type: string
-            description: passcode ID
-          name:
-            type: string
-            description: name of the passcode
-          type:
-            type: string
-            description: |
-              type of the passcode 
-              * permanent: a permanent passcode
-              * timeLimit: a temporary passcode
-              * disposable: a one-time passcode
-              * urgent: an emergency passcode.
-            enum: [permanent, timeLimit, disposable, urgent]
-          password:
-            type: string
-            description: the passcode string encrypted with the developer secret key using the aes-128-cbc algorithm
-          iv:
-            type: string
-            description: an arbitrary number used for the encryption
-          status:
-            type: string
-            description: |
-              validity of the passcode.
-              * normal: the passcode is valid
-              * expired: the passcode is invalid.
-            enum: [normal, expired]
-          createTime:
-            type: integer
-            description: the time when the passcode is generated
+    KeyList:
+      type: object
+      description: a list of passcodes
+      properties:
+        id:
+          type: string
+          description: passcode ID
+        name:
+          type: string
+          description: name of the passcode
+        type:
+          type: string
+          description: |
+            type of the passcode 
+            * permanent: a permanent passcode
+            * timeLimit: a temporary passcode
+            * disposable: a one-time passcode
+            * urgent: an emergency passcode.
+          enum: [permanent, timeLimit, disposable, urgent]
+        password:
+          type: string
+          description: the passcode string encrypted with the developer secret key using the aes-128-cbc algorithm
+        iv:
+          type: string
+          description: an arbitrary number used for the encryption
+        status:
+          type: string
+          description: |
+            validity of the passcode.
+            * normal: the passcode is valid
+            * expired: the passcode is invalid.
+          enum: [normal, expired]
+        createTime:
+          type: integer
+          description: the time when the passcode is generated
 
     BlindTilt:
       type: object

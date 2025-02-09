@@ -29,57 +29,57 @@ paths:
                         items:
                           oneOf:
                             - $ref: '#/components/schemas/Curtain'
-                            - $ref: '#/components/schemas/Device'
+                            - $ref: '#/components/schemas/DeviceListEntry'
                           discriminator:
                             propertyName: deviceType
                             mapping:
-                              Bot: '#/components/schemas/Device'
+                              Bot: '#/components/schemas/DeviceListEntry'
                               Curtain: '#/components/schemas/Curtain'
                               Curtain3: '#/components/schemas/Curtain'
-                              Hub: '#/components/schemas/Device'
-                              Hub Plus: '#/components/schemas/Device'
-                              Hub Mini: '#/components/schemas/Device'
-                              Hub 2: '#/components/schemas/Device'
-                              Meter: '#/components/schemas/Device'
-                              MeterPlus: '#/components/schemas/Device'
-                              WoIOSensor: '#/components/schemas/Device'
-                              MeterPro: '#/components/schemas/Device'
-                              MeterPro(CO2): '#/components/schemas/Device'
+                              Hub: '#/components/schemas/DeviceListEntry'
+                              Hub Plus: '#/components/schemas/DeviceListEntry'
+                              Hub Mini: '#/components/schemas/DeviceListEntry'
+                              Hub 2: '#/components/schemas/DeviceListEntry'
+                              Meter: '#/components/schemas/DeviceListEntry'
+                              MeterPlus: '#/components/schemas/DeviceListEntry'
+                              WoIOSensor: '#/components/schemas/DeviceListEntry'
+                              MeterPro: '#/components/schemas/DeviceListEntry'
+                              MeterPro(CO2): '#/components/schemas/DeviceListEntry'
                               Lock: '#/components/schemas/Lock'
                               Smart Lock Pro: '#/components/schemas/Lock'
                               Keypad: '#/components/schemas/Keypad'
                               Keypad Touch: '#/components/schemas/Keypad'
-                              Remote: '#/components/schemas/Device'
-                              Motion Sensor: '#/components/schemas/Device'
-                              Compact Sensor: '#/components/schemas/Device'
-                              Water Leak Detector: '#/components/schemas/Device'
-                              Ceiling Light: '#/components/schemas/Device'
-                              Celing Light Pro: '#/components/schemas/Device'
-                              Plug Mini (US): '#/components/schemas/Device'
-                              Plug Mini (JP): '#/components/schemas/Device'
-                              Plug: '#/components/schemas/Device'
-                              Strip Light: '#/components/schemas/Device'
-                              Color Bulb: '#/components/schemas/Device'
-                              Robot Vacuum Cleaner S1: '#/components/schemas/Device'
-                              Robot Vacuum Cleaner S1 Plus: '#/components/schemas/Device'
-                              K10+: '#/components/schemas/Device'
-                              K10+ Pro: '#/components/schemas/Device'
-                              Robot Vacuum Cleaner K10+ Pro Combo: '#/components/schemas/Device'
-                              Robot Vacuum Cleaner S10: '#/components/schemas/Device'
-                              Humidifier: '#/components/schemas/Device'
-                              Humidifier2: '#/components/schemas/Device'
-                              Air Purifier VOC: '#/components/schemas/Device'
-                              Air Purifier Table VOC: '#/components/schemas/Device'
-                              Air Purifier PM2.5: '#/components/schemas/Device'
-                              Air Purifier Table PM2.5: '#/components/schemas/Device'
-                              Indoor Cam: '#/components/schemas/Device'
-                              Pan/Tilt Cam: '#/components/schemas/Device'
+                              Remote: '#/components/schemas/DeviceListEntry'
+                              Motion Sensor: '#/components/schemas/DeviceListEntry'
+                              Compact Sensor: '#/components/schemas/DeviceListEntry'
+                              Water Leak Detector: '#/components/schemas/DeviceListEntry'
+                              Ceiling Light: '#/components/schemas/DeviceListEntry'
+                              Celing Light Pro: '#/components/schemas/DeviceListEntry'
+                              Plug Mini (US): '#/components/schemas/DeviceListEntry'
+                              Plug Mini (JP): '#/components/schemas/DeviceListEntry'
+                              Plug: '#/components/schemas/DeviceListEntry'
+                              Strip Light: '#/components/schemas/DeviceListEntry'
+                              Color Bulb: '#/components/schemas/DeviceListEntry'
+                              Robot Vacuum Cleaner S1: '#/components/schemas/DeviceListEntry'
+                              Robot Vacuum Cleaner S1 Plus: '#/components/schemas/DeviceListEntry'
+                              K10+: '#/components/schemas/DeviceListEntry'
+                              K10+ Pro: '#/components/schemas/DeviceListEntry'
+                              Robot Vacuum Cleaner K10+ Pro Combo: '#/components/schemas/DeviceListEntry'
+                              Robot Vacuum Cleaner S10: '#/components/schemas/DeviceListEntry'
+                              Humidifier: '#/components/schemas/DeviceListEntry'
+                              Humidifier2: '#/components/schemas/DeviceListEntry'
+                              Air Purifier VOC: '#/components/schemas/DeviceListEntry'
+                              Air Purifier Table VOC: '#/components/schemas/DeviceListEntry'
+                              Air Purifier PM2.5: '#/components/schemas/DeviceListEntry'
+                              Air Purifier Table PM2.5: '#/components/schemas/DeviceListEntry'
+                              Indoor Cam: '#/components/schemas/DeviceListEntry'
+                              Pan/Tilt Cam: '#/components/schemas/DeviceListEntry'
                               Blind Tilt: '#/components/schemas/BlindTilt'
-                              Battery Circulator Fan: '#/components/schemas/Device'
-                              Circulator Fan: '#/components/schemas/Device'
+                              Battery Circulator Fan: '#/components/schemas/DeviceListEntry'
+                              Circulator Fan: '#/components/schemas/DeviceListEntry'
                               Roller Shade: '#/components/schemas/RollerShade'
-                              Relay Switch 1PM: '#/components/schemas/Device'
-                              Relay Switch 1: '#/components/schemas/Device'
+                              Relay Switch 1PM: '#/components/schemas/DeviceListEntry'
+                              Relay Switch 1: '#/components/schemas/DeviceListEntry'
                       infraredRemoteList:
                         type: array
                         items:
@@ -337,11 +337,11 @@ components:
           format: float
           description: Temperature in Celsius.
     
-    Device:
+    DeviceListEntry:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
-        - $ref: '#/components/schemas/NamedDevice'
+        - $ref: '#/components/schemas/NamedObject'
       properties:
         enableCloudService:
           type: boolean
@@ -358,7 +358,7 @@ components:
     Curtain:
       type: object
       allOf:
-        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/DeviceListEntry'
         - $ref: '#/components/schemas/CalibratedObject'
         - $ref: '#/components/schemas/MasterGroupObject'
       properties:
@@ -374,7 +374,7 @@ components:
     Lock:
       type: object
       allOf:
-        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/DeviceListEntry'
         - $ref: '#/components/schemas/NamedMasterGroupObject'
       properties:
         lockDevicesIds:
@@ -386,7 +386,7 @@ components:
     Keypad:
       type: object
       allOf:
-        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/DeviceListEntry'
       properties:
         lockDevicesId:
           type: string
@@ -434,7 +434,7 @@ components:
     BlindTilt:
       type: object
       allOf:
-        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/DeviceListEntry'
         - $ref: '#/components/schemas/CalibratedObject'
         - $ref: '#/components/schemas/MasterGroupObject'
       properties:
@@ -452,10 +452,10 @@ components:
           minimum: 0
           maximum: 100
 
-    Roller Shade:
+    RollerShade:
       type: object
       allOf:
-        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/DeviceListEntry'
         - $ref: '#/components/schemas/NamedMasterGroupObject'
       properties:
         bleVersion:

@@ -30,6 +30,10 @@ paths:
                           oneOf:
                             - $ref: '#/components/schemas/Curtain'
                             - $ref: '#/components/schemas/DeviceListEntry'
+                            - $ref: '#/components/schemas/Lock'
+                            - $ref: '#/components/schemas/Keypad'
+                            - $ref: '#/components/schemas/BlindTilt'
+                            - $ref: '#/components/schemas/RollerShade'
                           discriminator:
                             propertyName: deviceType
                             mapping:
@@ -111,6 +115,7 @@ paths:
                       - $ref: '#/components/schemas/BotStatus'
                       - $ref: '#/components/schemas/CurtainStatus'
                       - $ref: '#/components/schemas/MeterStatus'
+                      - $ref: '#/components/schemas/CO2MeterStatus'
                       - $ref: '#/components/schemas/LockStatus'
                       - $ref: '#/components/schemas/MotionSensorStatus'
                       - $ref: '#/components/schemas/WaterLeakDetectorStatus'
@@ -119,6 +124,22 @@ paths:
                       - $ref: '#/components/schemas/RobotVacuumCleanerStatus'
                       - $ref: '#/components/schemas/HumidifierStatus'
                       - $ref: '#/components/schemas/CirculatorFanStatus'
+                      - $ref: '#/components/schemas/BaseDevice'
+                      - $ref: '#/components/schemas/ContactSensorStatus'
+                      - $ref: '#/components/schemas/PlugStatus'
+                      - $ref: '#/components/schemas/StripLightStatus'
+                      - $ref: '#/components/schemas/ColorBulbStatus'
+                      - $ref: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+                      - $ref: '#/components/schemas/K10ProComboStatus'
+                      - $ref: '#/components/schemas/S10Status'
+                      - $ref: '#/components/schemas/EvaporativeHumidifierStatus'
+                      - $ref: '#/components/schemas/AirPurifierStatus'
+                      - $ref: '#/components/schemas/BlindTiltStatus'
+                      - $ref: '#/components/schemas/RollerShadeStatus'
+                      - $ref: '#/components/schemas/Hub2Status'
+                      - $ref: '#/components/schemas/BatteryCirculatorFanStatus'
+                      - $ref: '#/components/schemas/1PmRelaySwitchStatus'
+                      - $ref: '#/components/schemas/RelaySwitchStatus'
                     discriminator:
                       propertyName: deviceType
                       mapping:
@@ -132,7 +153,7 @@ paths:
                         MeterPro(CO2): '#/components/schemas/CO2MeterStatus'
                         Smart Lock: '#/components/schemas/LockStatus'
                         Smart Lock Pro: '#/components/schemas/LockStatus'
-                        Keypad: '#/components/schemas/DeviceStatus'
+                        Keypad: '#/components/schemas/BaseDevice'
                         Motion Sensor: '#/components/schemas/MotionSensorStatus'
                         Contact Sensor: '#/components/schemas/ContactSensorStatus'
                         Water Detector: '#/components/schemas/WaterLeakDetectorStatus'

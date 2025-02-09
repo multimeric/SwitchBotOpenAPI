@@ -454,12 +454,11 @@ components:
           type: string
           description: MAC address of the Lock that the current device is paired with
         keyList:
-          type: 
-            $ref: '#/components/schemas/KeyList'
-          description: a list of passcodes
+          $ref: '#/components/schemas/KeyList'
 
       KeyList:
         type: object
+        description: a list of passcodes
         properties:
           id:
             type: string

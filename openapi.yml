@@ -9,6 +9,11 @@ paths:
     get:
       summary: Get device list
       description: Get a list of devices, which include physical devices and virtual infrared remote devices that have been added to the current user's account.
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/sign'
+        - $ref: '#/components/parameters/t'
+        - $ref: '#/components/parameters/nonce'
       responses:
         '200':
           description: A list of devices
@@ -98,6 +103,10 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/sign'
+        - $ref: '#/components/parameters/t'
+        - $ref: '#/components/parameters/nonce'
       responses:
         '200':
           description: The status of the device
@@ -193,6 +202,10 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/sign'
+        - $ref: '#/components/parameters/t'
+        - $ref: '#/components/parameters/nonce'
       requestBody:
         required: true
         content:
@@ -219,9 +232,36 @@ paths:
                   message:
                     type: string
 components:
+  parameters:
+    authorization:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-f0-9]+$'
+    sign:
+      name: sign
+      in: header
+      required: true
+      schema:
+        type: string
+    t:  
+      name: t
+      in: header
+      required: true
+      schema:
+        type: integer
+        format: int64
+    nonce:
+      name: nonce
+      in: header
+      required: true
+      schema:
+        type: string
   schemas:
-    # Mixins
 
+    # Mixins
     BaseDevice:
       type: object
       properties:
@@ -357,7 +397,8 @@ components:
           type: number
           format: float
           description: Temperature in Celsius.
-    
+
+    # Entities returned by /devices
     DeviceListEntry:
       type: object
       allOf:
@@ -488,6 +529,7 @@ components:
             type: string
           description: a list of device IDs such that the Roller Shade devices are being paired or grouped
     
+    # Entities returned by /devices/{deviceId}/status
     BotStatus:
       allOf:
         - $ref: '#/components/schemas/BaseDevice'

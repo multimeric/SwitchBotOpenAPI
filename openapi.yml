@@ -107,12 +107,61 @@ paths:
                   message:
                     type: string
                   body:
-                    type: object
-                    properties:
-                      deviceId:
-                        type: string
-                      deviceType:
-                        type: string
+                    oneOf:
+                      - $ref: '#/components/schemas/BotStatus'
+                      - $ref: '#/components/schemas/CurtainStatus'
+                      - $ref: '#/components/schemas/MeterStatus'
+                      - $ref: '#/components/schemas/LockStatus'
+                      - $ref: '#/components/schemas/MotionSensorStatus'
+                      - $ref: '#/components/schemas/WaterLeakDetectorStatus'
+                      - $ref: '#/components/schemas/CeilingLightStatus'
+                      - $ref: '#/components/schemas/PlugMiniStatus'
+                      - $ref: '#/components/schemas/RobotVacuumCleanerStatus'
+                      - $ref: '#/components/schemas/HumidifierStatus'
+                      - $ref: '#/components/schemas/CirculatorFanStatus'
+                    discriminator:
+                      propertyName: deviceType
+                      mapping:
+                        Bot: '#/components/schemas/BotStatus'
+                        Curtain: '#/components/schemas/CurtainStatus'
+                        Curtain3: '#/components/schemas/CurtainStatus'
+                        Meter: '#/components/schemas/MeterStatus'
+                        MeterPlus: '#/components/schemas/MeterStatus'
+                        WoIOSensor: '#/components/schemas/MeterStatus'
+                        MeterPro: '#/components/schemas/MeterStatus'
+                        MeterPro(CO2): '#/components/schemas/CO2MeterStatus'
+                        Smart Lock: '#/components/schemas/LockStatus'
+                        Smart Lock Pro: '#/components/schemas/LockStatus'
+                        Keypad: '#/components/schemas/DeviceStatus'
+                        Motion Sensor: '#/components/schemas/MotionSensorStatus'
+                        Contact Sensor: '#/components/schemas/ContactSensorStatus'
+                        Water Detector: '#/components/schemas/WaterLeakDetectorStatus'
+                        Ceiling Light: '#/components/schemas/CeilingLightStatus'
+                        Ceiling Light Pro: '#/components/schemas/CeilingLightStatus'
+                        Plug Mini (US): '#/components/schemas/PlugMiniStatus'
+                        Plug Mini (JP): '#/components/schemas/PlugMiniStatus'
+                        Plug: '#/components/schemas/PlugStatus'
+                        Strip Light: '#/components/schemas/StripLightStatus'
+                        Color Bulb: '#/components/schemas/ColorBulbStatus'
+                        Robot Vacuum Cleaner S1: '#/components/schemas/RobotVacuumCleanerStatus'
+                        Robot Vacuum Cleaner S1 Plus: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+                        K10+: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+                        K10+ Pro: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+                        Robot Vacuum Cleaner K10+ Pro Combo: '#/components/schemas/K10ProComboStatus'
+                        Robot Vacuum Cleaner S10: '#/components/schemas/S10Status'
+                        Humidifier: '#/components/schemas/HumidifierStatus'
+                        Humidifier2: '#/components/schemas/EvaporativeHumidifierStatus'
+                        Air Purifier VOC: '#/components/schemas/AirPurifierStatus'
+                        Air Purifier Table VOC: '#/components/schemas/AirPurifierStatus'
+                        Air Purifier PM2.5: '#/components/schemas/AirPurifierStatus'
+                        Air Purifier Table PM2.5: '#/components/schemas/AirPurifierStatus'
+                        Blind Tilt: '#/components/schemas/BlindTiltStatus'
+                        Roller Shade: '#/components/schemas/RollerShadeStatus'
+                        Hub 2: '#/components/schemas/Hub2Status'
+                        Circulator Fan: '#/components/schemas/CirculatorFanStatus'
+                        Battery Circulator Fan: '#/components/schemas/BatteryCirculatorFanStatus'
+                        Relay Switch 1PM: '#/components/schemas/1PmRelaySwitchStatus'
+                        Relay Switch 1: '#/components/schemas/RelaySwitchStatus'
   /v1.1/devices/{deviceId}/commands:
     post:
       summary: Send device control commands
@@ -150,6 +199,8 @@ paths:
                     type: string
 components:
   schemas:
+    # Mixins
+
     BaseDevice:
       type: object
       properties:
@@ -160,16 +211,142 @@ components:
         hubDeviceId:
           type: string
           description: device's parent Hub ID
+
+    GroupObject:
+      type: object
+      properties:
+        group:
+          type: boolean
+          description: Determines if the device is grouped with another device.
+
+    MasterGroupObject:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/GroupObject'
+      properties:
+        master:
+          type: boolean
+          description: Determines if the device is the master device when grouped with another device.
+
+    NamedMasterGroupObject:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/MasterGroupObject'
+      properties:
+        groupName:
+          type: string
+          description: the name of the group
+
+    MovingSlideObject:
+      type: object
+      properties:
+        slidePosition:
+          type: integer
+          description: The percentage of distance traversed between open and closed positions.
+          minimum: 0
+          maximum: 100
+        moving:
+          type: boolean
+          description: True if the device is moving.
+
+    NamedObject:
+      type: object
+      properties:
+        deviceName:
+          type: string
+          description: The name of the device.
+
+    BatteryObject:
+      type: object
+      properties:
+        battery:
+          type: integer
+          description: The current battery level of the device, ranging from 0 to 100.
+          minimum: 0
+          maximum: 100
+
+    VersionObject:
+      type: object
+      properties:
+        version:
+          type: string
+          description: The current firmware version
+
+    PowerObject:
+      type: object
+      properties:
+        power:
+          type: string
+          description: The ON/OFF state of the device.
+          enum: [ON, OFF]
+
+    CalibratedObject:
+      type: object
+      properties:
+        calibrate:
+          type: boolean
+          description: Determines if the device has been calibrated.
+
+    BrightnessObject:
+      type: object
+      properties:
+        brightness:
+          type: integer
+          description: The brightness value of the device.
+          minimum: 1
+          maximum: 100
+
+    RgbColorObject:
+      type: object
+      properties:
+        color:
+          type: string
+          description: The color value of the device.
+          pattern: ^\d{3}:\d{3}:\d{3}$
+
+    ChildLockObject:
+      type: object
+      properties:
+        childLock:
+          type: boolean
+          description: Determines if the safety lock is on.
+
+    ColorTemperatureObject:
+      type: object
+      properties:
+        colorTemperature:
+          type: integer
+          description: The color temperature value of the device.
+          minimum: 2700
+          maximum: 6500
+
+    HumidityObject:
+      type: object
+      properties:
+        humidity:
+          type: integer
+          description: Humidity percentage.
+          minimum: 0
+          maximum: 100
+
+    TemperatureObject:
+      type: object
+      properties:
+        temperature:
+          type: number
+          format: float
+          description: Temperature in Celsius.
+    
     Device:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/NamedDevice'
       properties:
-        deviceName:
-          type: string
         enableCloudService:
           type: boolean
           description: determines if Cloud Service is enabled or not for the current device
+
     InfraredRemote:
       type: object
       allOf:
@@ -177,47 +354,35 @@ components:
       properties:
         remoteType:
           type: string
+
     Curtain:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/CalibratedObject'
+        - $ref: '#/components/schemas/MasterGroupObject'
       properties:
         curtainDeviceIds:
           type: array
           items:
             type: string
           description: a list of Curtain device IDs such that the Curtain devices are being paired or grouped
-        calibrate:
-          type: boolean
-          description: determines if the open position and the close position of a device have been properly calibrated or not
-        group:
-          type: boolean
-          description: determines if a Curtain is paired with or grouped with another Curtain or not
-        master:
-          type: boolean
-          description: determines if a Curtain is the master device or not when paired with or grouped with another Curtain
         openDirection:
           type: string
           description: the opening direction of a Curtain
+
     Lock:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/NamedMasterGroupObject'
       properties:
-        group:
-          type: boolean
-          description: determines if a Lock is grouped with another Lock or not
-        master:
-          type: boolean
-          description: determines if a Lock is the master device or not when grouped with another Lock in Dual Lock mode
-        groupName:
-          type: string
-          description: the name of the Lock group
         lockDevicesIds:
           type: array
           items:
             type: string
           description: a list of Lock device IDs such that the Lock devices are being grouped in Dual Lock mode
+
     Keypad:
       type: object
       allOf:
@@ -230,6 +395,7 @@ components:
           type: 
             $ref: '#/components/schemas/KeyList'
           description: a list of passcodes
+
       KeyList:
         type: object
         properties:
@@ -264,25 +430,19 @@ components:
           createTime:
             type: integer
             description: the time when the passcode is generated
+
     BlindTilt:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/CalibratedObject'
+        - $ref: '#/components/schemas/MasterGroupObject'
       properties:
         blindTiltDevicesIds:
           type: array
           items:
             type: string
           description: a list of Blind Tilt device IDs such that the Blind Tilt devices are being paired or grouped
-        calibrate:
-          type: boolean
-          description: determines if the open and the closed positions have been properly calibrated or not
-        group:
-          type: boolean
-          description: determines if a Blind Tilt device is paired with or grouped with one or more devices of the same type or not
-        master:
-          type: boolean
-          description: determines if a Blind Tilt device is the master device or not when paired with or grouped with one or more devices of the same type
         direction:
           type: string
           description: the opening direction of a Blind Tilt device
@@ -291,10 +451,12 @@ components:
           description: the current position
           minimum: 0
           maximum: 100
+
     Roller Shade:
       type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/NamedMasterGroupObject'
       properties:
         bleVersion:
           type: string
@@ -304,41 +466,429 @@ components:
           items:
             type: string
           description: a list of device IDs such that the Roller Shade devices are being paired or grouped
-        group:
-          type: boolean
-          description: determines if a device is paired with or grouped with one or more devices of the same type or not
-        master:
-          type: boolean
-          description: determines if a device is the master device or not when paired with or grouped with one or more devices of the same type
-        groupName:
-          type: string
-          description: the name of the device group
-        
+    
+    BotStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - type: object
+          properties:
+            deviceMode:
+              type: string
+              enum: [pressMode, switchMode, customizeMode]
 
-    MeterPlusStatus:
-      type: object
+    CurtainStatus:
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/CalibratedObject'
+        - $ref: '#/components/schemas/GroupObject'
+        - $ref: '#/components/schemas/MovingSlideObject'
+
+    MeterStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - type: object
+          properties:
+            temperature:
+              type: number
+              format: float
+              description: Temperature in Celsius.
+            humidity:
+              type: integer
+              description: Humidity percentage.
+
+    CO2MeterStatus:
+      allOf:
+        - $ref: '#/components/schemas/MeterStatus'
+        - type: object
+          properties:
+            CO2:
+              type: integer
+              description: CO2 concentration in ppm.
+              minimum: 0
+              maximum: 9999
+
+    LockStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/CalibratedObject'
+        - type: object
+          properties:
+            lockState:
+              type: string
+              description: Determines if locked or not.
+            doorState:
+              type: string
+              description: Determines if the door is closed or not.
+
+    MotionSensorStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - type: object
+          properties:
+            moveDetected:
+              type: boolean
+              description: Determines if motion is detected.
+            brightness:
+              type: string
+              description: Ambient brightness detected
+              enum: [bright, dim]
+    
+    ContactSensorStatus:
+      allOf:
+        - $ref: '#/components/schemas/MotionSensorStatus'
+        - type: object
+          properties:
+            openState:
+              type: string
+              description: the open state of the sensor.
+              enum: [open, close, timeOutNotClose]
+
+    WaterLeakDetectorStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - type: object
+          properties:
+            status:
+              type: integer
+              description: |
+                * 0: dry
+                * 1: leak detected.
+              enum: [0, 1]
+
+    CeilingLightStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/BrightnessObject'
+        - $ref: '#/components/schemas/ColorTemperatureObject'
+
+    PlugMiniStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - type: object
+          properties:
+            voltage:
+              type: number
+              format: float
+              description: Voltage of the device (Volts).
+            weight:
+              type: number
+              format: float
+              description: Power consumed in a day (Watts).
+            electricityOfDay:
+              type: integer
+              description: Duration used during a day (minutes).
+            electricCurrent:
+              type: number
+              format: float
+              description: Current of the device (Amps).
+
+    PlugStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+    
+    StripLightStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/BrightnessObject'
+        - $ref: '#/components/schemas/RgbColorObject'
+
+    ColorBulbStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/BrightnessObject'
+        - $ref: '#/components/schemas/RgbColorObject'
+        - $ref: '#/components/schemas/ColorTemperatureObject'
+
+    RobotVacuumCleanerStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/BatteryObject'
+        - type: object
+          properties:
+            workingStatus:
+              type: string
+              description: Working status
+              enum: [StandBy, Cleaning, Paused, GotoChargeBase, Charging, ChargeDone, Dormant, InTrouble, InRemoteControl, InDustCollecting]
+            onlineStatus:
+              type: string
+              description: Connection status
+              enum: [online, offline]
+
+    NamedRobotVacuumCleanerStatus:
+      allOf:
+        - $ref: '#/components/schemas/RobotVacuumCleanerStatus'
+        - type: object
+          properties:
+            deviceName:
+              type: string
+              description: The name of the device.
+
+    K10ProComboStatus:
+      allOf:
+        - $ref: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+        - type: object
+          properties:
+            taskType:
+              type: string
+              description: Task type
+              enum:
+                - standBy
+                - explore
+                - cleanAll
+                - cleanArea
+                - cleanRoom
+                - backToCharge
+                - collectDust
+                - remoteControl
+                - cleanWithExplorer
+
+    S10Status:
+      allOf:
+        - $ref: '#/components/schemas/NamedRobotVacuumCleanerStatus'
+        - type: object
+          properties:
+            taskType:
+              type: string
+              description: Task type
+              enum:
+                - standBy
+                - explore
+                - cleanAll
+                - cleanArea
+                - cleanRoom
+                - fillWater
+                - deepWashing
+                - backToCharge
+                - markingWaterBase
+                - drying
+                - collectDust
+                - remoteControl
+                - cleanWithExplorer
+                - fillWaterForHumi
+                - markingHumi
+
+    HumidifierStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/HumidityObject'
+        - $ref: '#/components/schemas/TemperatureObject'
+        - $ref: '#/components/schemas/ChildLockObject'
+        - type: object
+          properties:
+            nebulizationEfficiency:
+              type: integer
+              description: Atomization efficiency percentage.
+            auto:
+              type: boolean
+              description: Determines if the humidifier is in Auto Mode.
+            sound:
+              type: boolean
+              description: Determines if muted.
+            lackWater:
+              type: boolean
+              description: Determines if the water tank is empty.
+
+    EvaporativeHumidifierStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/HumidityObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/ChildLockObject'
+        - type: object
+          properties:
+            mode:
+              type: integer
+              description: | 
+                Humidifier mode.
+                * 1: Level 4
+                * 2: Level 3
+                * 3: Level 2
+                * 4: Level 1
+                * 5: Humidity mode
+                * 6: Sleep mode
+                * 7: Auto mode
+                * 8: Drying mode
+              minimum: 1
+              maximum: 8
+            drying: 
+              type: boolean
+              description: Determines if the drying mode is on.
+            childLock:
+              type: boolean
+              description: Determines if the safety lock is on.
+            filterElement:
+              $ref: '#/components/schemas/FilterElement'
+            
+    FilterElement:
+      type: object
       properties:
-        version:
-          type: string
-        temperature:
-          type: number
-        battery:
-          type: number
-        humidity:
-          type: number
+        effectiveUsageHours:
+          type: integer
+          description: Effective duration of the filter in hours.
+        usedHours:
+          type: integer
+          description: Number of hours the filter has been used.
+
+    AirPurifierStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/PowerObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - type: object
+          properties:
+            childLock:
+              type: int
+              description: |
+                Determines if the safety lock is on.
+                * 0: off
+                * 1: on
+              enum: [0, 1]
+            mode:
+              type: integer
+              description: | 
+                Air purifier mode.
+                * 1: Normal or fan
+                * 2: Auto
+                * 3: Sleep
+                * 4: Pet
+              minimum: 1
+              maximum: 4
+    
+    BlindTiltStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/CalibratedObject'
+        - $ref: '#/components/schemas/GroupObject'
+        - $ref: '#/components/schemas/MovingSlideObject'
+        - type: object
+          properties:
+            direction:
+              type: string
+              description: opening direction
+    
+    RollerShadeStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/BatteryObject'
+        - $ref: '#/components/schemas/MovingSlideObject'
+        - $ref: '#/components/schemas/CalibratedObject'
+
     Hub2Status:
-      type: object
       allOf:
         - $ref: '#/components/schemas/BaseDevice'
-      properties:
-        version:
-          type: string
-        temperature:
-          type: number
-        lightLevel:
-          type: number
-        humidity:
-          type: number
-      
+        - $ref: '#/components/schemas/TemperatureObject'
+        - $ref: '#/components/schemas/HumidityObject'
+        - $ref: '#/components/schemas/VersionObject'
+        - type: object
+          properties:
+            lightLevel:
+              type: integer
+              description: Ambient light level.
+              minimum: 1
+              maximum: 20
+
+    CirculatorFanStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - type: object
+          properties:
+            mode:
+              type: string
+              description: |
+                Fan mode
+                * direct: Direct
+                * natural: Natural
+                * sleep: Sleep
+                * baby: Ultra quiet
+              enum: [direct, natural, sleep, baby]
+            nightStatus:
+              type: integer
+              description: Nightlight status
+            oscillation:
+              type: string
+              description: Horizontal oscillation
+              enum: [on, off]
+            verticalOscillation:
+              type: string
+              description: Vertical oscillation
+              enum: [on, off]
+            chargingStatus:
+              type: string
+              description: Charging status
+              enum: [charging, uncharged]
+            fanSpeed:
+              type: integer
+              minimum: 1
+              maximum: 100
+              description: Fan speed
+
+    BatteryCirculatorFanStatus:
+      allOf:
+        - $ref: '#/components/schemas/CirculatorFanStatus'
+        - $ref: '#/components/schemas/BatteryObject'
+    
+    1PmRelaySwitchStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - type: object
+          properties:
+            switchStatus:
+              type: integer
+              description: | 
+                Switch status
+                * 0: off
+                * 1: on
+              enum: [0, 1]
+            voltage:
+              type: integer
+              description: Current voltage (Volts)
+            usedElectricity:
+              type: integer
+              description: Daily power consumption (Watts-minutes)
+            electricCurrent:
+              type: integer
+              description: Current (mA)
+
+    RelaySwitchStatus:
+      allOf:
+        - $ref: '#/components/schemas/BaseDevice'
+        - $ref: '#/components/schemas/VersionObject'
+        - $ref: '#/components/schemas/PowerObject'
+        - type: object
+          properties:
+            switchStatus:
+              type: integer
+              description: | 
+                Switch status
+                * 0: off
+                * 1: on
+              enum: [0, 1]

@@ -4,8 +4,9 @@ from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
 import pytest
 from openapi_core import OpenAPI
-from openapi_core.protocols import Response, Request
 from openapi_core.datatypes import RequestParameters
+from openapi_python_client.schema import openapi_schema_pydantic as osp
+from ruamel.yaml import YAML
 
 @dataclass
 class FakeRequest:
@@ -29,22 +30,24 @@ class ReqResPair:
     request: FakeRequest
     response: FakeReponse
 
-    # @property
-    # def data(self) -> Optional[bytes]:
-    #     with open(self.content_path, 'rb') as f:
-    #         return f.read()
-
-
 @pytest.fixture
 def openapi() -> OpenAPI:
     return OpenAPI.from_file_path('openapi.yml')
 
-def test_validate_spec():
+def test_validate_openapi_spec_validator():
     """
-    Test the validity of the spec itself
+    Test the validity of the spec itself using openapi_spec_validator
     """
     spec_dict, _base_uri = read_from_filename('openapi.yml')
     validate(spec_dict)
+
+def test_validate_openapi_python_client():
+    """
+    Test the validity of the spec itself using openapi_python_client
+    """
+    yaml = YAML(typ='safe', pure=True)
+    with open('openapi.yml') as f:
+        osp.OpenAPI.model_validate(yaml.load(f))
 
 @pytest.mark.parametrize('pair', [
     ReqResPair(

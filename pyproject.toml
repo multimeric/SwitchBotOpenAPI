@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = "==3.13.*"
 dependencies = [
     "openapi-core>=0.19.4",
+    "openapi-python-client>=0.23.1",
     "openapi-spec-validator>=0.7.1",
     "pytest>=8.3.4",
 ]

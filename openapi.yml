@@ -1122,8 +1122,13 @@ components:
                     minimum: 0
                     maximum: 100
 
-    AirPurifierVOCCommandRequest:
-      description: Applies to Air Purifier VOC devices
+    AirPurifierCommandRequest:
+      description: |
+        Applies to:
+        * Air Purifier VOC 
+        * Air Purifier Table VOC
+        * Air Purifier PM2.5
+        * Air Purifier Table PM2.5
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
         - oneOf:

@@ -1069,3 +1069,55 @@ components:
                   * 101: set atomization efficiency to 34%
                   * 102: set atomization efficiency to 67%
                   * 103: set atomization efficiency to 100%
+
+    EvaporativeHumidifierCommandRequest:
+      description: Applies to Evaporative Humidifier devices aka Humidifier2
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Enables or disables the child lock of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setChildLock]
+              parameter:
+                type: boolean
+          - type: object
+            description: Turns on the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Sets the mode of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: object
+                properties:
+                  mode:
+                    type: integer
+                    enum: [1, 2, 3, 4, 5, 6, 7, 8]
+                    description: |
+                      Humidifier mode.
+                      * 1: Level 4
+                      * 2: Level 3
+                      * 3: Level 2
+                      * 4: Level 1
+                      * 5: Humidity mode
+                      * 6: Sleep mode
+                      * 7: Auto mode
+                      * 8: Drying mode
+                  targetHumidity:
+                    type: integer
+                    minimum: 0
+                    maximum: 100

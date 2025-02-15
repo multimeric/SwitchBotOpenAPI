@@ -1121,3 +1121,56 @@ components:
                     type: integer
                     minimum: 0
                     maximum: 100
+
+    AirPurifierVOCCommandRequest:
+      description: Applies to Air Purifier VOC devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Enables or disables the child lock of the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [setChildLock]
+              parameter:
+                type: integer
+                enum: [0, 1]
+                description: |
+                  * 0: disable child lock
+                  * 1: enable child lock
+          - type: object
+            description: Turns on the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Sets the mode of the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: object
+                properties:
+                  mode:
+                    type: integer
+                    enum: [1, 2, 3, 4]
+                    description: |
+                      Air purifier mode.
+                      * 1: Normal or fan
+                      * 2: Auto
+                      * 3: Sleep
+                      * 4: Pet
+                  fanGear:
+                    type: integer
+                    minimum: 1
+                    maximum: 3
+                    description: Fan speed. Can only be set when mode is 1.

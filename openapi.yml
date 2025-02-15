@@ -1179,3 +1179,47 @@ components:
                     minimum: 1
                     maximum: 3
                     description: Fan speed. Can only be set when mode is 1.
+
+    PlugCommandRequest:
+      description: Applies to Plug devices but not Plug Mini devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the plug
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the plug
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+
+    PlugMiniCommandRequest:
+      description: Applies to Plug Mini devices, both US and JP versions
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the plug mini
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the plug mini
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Toggles the on/off state of the plug mini
+            properties:
+              commandType:
+                type: string
+                enum: [toggle]
+
+

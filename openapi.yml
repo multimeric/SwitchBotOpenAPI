@@ -1222,4 +1222,42 @@ components:
                 type: string
                 enum: [toggle]
 
+    RelaySwitchCommandRequest:
+      description: Applies to Relay Switch 1 and 1PM devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the relay switch
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the relay switch
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Toggles the relay switch
+            properties:
+              commandType:
+                type: string
+                enum: [toggle]
+          - type: object
+            description: Sets the mode of the relay switch
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: integer
+                enum: [0, 1, 2, 3]
+                description: |
+                  * 0: toggle mode
+                  * 1: edge switch mode
+                  * 2: detached switch mode
+                  * 3: momentary switch mode
+
 

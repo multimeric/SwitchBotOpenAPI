@@ -1017,3 +1017,55 @@ components:
                     * 1: silent
                     * ff: default
                   * Position in the range of 0-100, where 0 is open and 100 is closed.
+
+    LockCommandRequest:
+      description: Applies to Lock and Lock Pro devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Locks the device
+            properties:
+              commandType:
+                type: string
+                enum: [lock]
+          - type: object
+            description: Unlocks the device
+            properties:
+              commandType:
+                type: string
+                enum: [unlock]
+
+    HumidifierCommandRequest:
+      description: Applies to Humidifier devices but not Evaporative Humidifiers
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Sets the mode of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: string
+                pattern: 'auto|(\d+)'
+                description: |
+                  Mode of the humidifier:
+                  * auto: Automatic mode
+                  * 0-100: Set atomization efficiency to the specified percentage.
+                  * 101: set atomization efficiency to 34%
+                  * 102: set atomization efficiency to 67%
+                  * 103: set atomization efficiency to 100%

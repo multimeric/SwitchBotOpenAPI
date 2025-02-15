@@ -1260,4 +1260,105 @@ components:
                   * 2: detached switch mode
                   * 3: momentary switch mode
 
+    ColorBulbCommandRequest:
+      description: Applies to Color Bulb devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Toggles the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [toggle]
+          - type: object
+            description: Sets the brightness of the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [setBrightness]
+              parameter:
+                type: integer
+                minimum: 1
+                maximum: 100
+                description: Brightness level
+          - type: object
+            description: Sets the color of the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [setColour]
+              parameter:
+                type: string
+                pattern: '^\d{3}:\d{3}:\d{3}$'
+                description: RGB color value (e.g., 255:000:000 for red)
+          - type: object
+            description: Sets the color temperature of the color bulb
+            properties:
+              commandType:
+                type: string
+                enum: [setColorTemperature]
+              parameter:
+                type: integer
+                minimum: 2700
+                maximum: 6500
+                description: Color temperature (2700-6500)
+
+    StripLightCommandRequest:
+      description: Applies to Strip Light devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Turns on the strip light
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Turns off the strip light
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Toggles the strip light
+            properties:
+              commandType:
+                type: string
+                enum: [toggle]
+          - type: object
+            description: Sets the brightness of the strip light
+            properties:
+              commandType:
+                type: string
+                enum: [setBrightness]
+              parameter:
+                type: integer
+                minimum: 1
+                maximum: 100
+                description: Brightness level
+          - type: object
+            description: Sets the color of the strip light
+            properties:
+              commandType:
+                type: string
+                enum: [setColour]
+              parameter:
+                type: string
+                pattern: '^\d{3}:\d{3}:\d{3}$'
+                description: RGB color value (e.g., 255:000:000 for red)
+
 

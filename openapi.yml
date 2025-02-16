@@ -968,9 +968,34 @@ components:
           type: string
           enum: [default]
 
+    TurnOnOffCommand:
+      type: object
+      oneOf:
+        - type: object
+          description: Turns on the device
+          properties:
+            commandType:
+              type: string
+              enum: [turnOn]
+        - type: object
+          description: Turns off the device
+          properties:
+            commandType:
+              type: string
+              enum: [turnOff]
+
+    ToggleCommand:
+      type: object
+      description: Toggles the device on or off
+      properties:
+        commandType:
+          type: string
+          enum: [toggle]
+
     BotCommandRequest:
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
         - type: object
           properties:
             commandType:
@@ -1131,6 +1156,7 @@ components:
         * Air Purifier Table PM2.5
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
         - oneOf:
           - type: object
             description: Enables or disables the child lock of the air purifier
@@ -1144,18 +1170,6 @@ components:
                 description: |
                   * 0: disable child lock
                   * 1: enable child lock
-          - type: object
-            description: Turns on the air purifier
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the air purifier
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
           - type: object
             description: Sets the mode of the air purifier
             properties:
@@ -1184,67 +1198,22 @@ components:
       description: Applies to Plug devices but not Plug Mini devices
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
-        - oneOf:
-          - type: object
-            description: Turns on the plug
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the plug
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
+        - $ref: '#/components/schemas/TurnOnOffCommand'
 
     PlugMiniCommandRequest:
       description: Applies to Plug Mini devices, both US and JP versions
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
-        - oneOf:
-          - type: object
-            description: Turns on the plug mini
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the plug mini
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
-          - type: object
-            description: Toggles the on/off state of the plug mini
-            properties:
-              commandType:
-                type: string
-                enum: [toggle]
+        - $ref: '#/components/schemas/TurnOnOffCommand'
+        - $ref: '#/components/schemas/ToggleCommand'
 
     RelaySwitchCommandRequest:
       description: Applies to Relay Switch 1 and 1PM devices
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
+        - $ref: '#/components/schemas/ToggleCommand'
         - oneOf:
-          - type: object
-            description: Turns on the relay switch
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the relay switch
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
-          - type: object
-            description: Toggles the relay switch
-            properties:
-              commandType:
-                type: string
-                enum: [toggle]
           - type: object
             description: Sets the mode of the relay switch
             properties:
@@ -1264,25 +1233,9 @@ components:
       description: Applies to Color Bulb devices
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
+        - $ref: '#/components/schemas/ToggleCommand'
         - oneOf:
-          - type: object
-            description: Turns on the color bulb
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the color bulb
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
-          - type: object
-            description: Toggles the color bulb
-            properties:
-              commandType:
-                type: string
-                enum: [toggle]
           - type: object
             description: Sets the brightness of the color bulb
             properties:
@@ -1320,25 +1273,9 @@ components:
       description: Applies to Strip Light devices
       allOf:
         - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
+        - $ref: '#/components/schemas/ToggleCommand'
         - oneOf:
-          - type: object
-            description: Turns on the strip light
-            properties:
-              commandType:
-                type: string
-                enum: [turnOn]
-          - type: object
-            description: Turns off the strip light
-            properties:
-              commandType:
-                type: string
-                enum: [turnOff]
-          - type: object
-            description: Toggles the strip light
-            properties:
-              commandType:
-                type: string
-                enum: [toggle]
           - type: object
             description: Sets the brightness of the strip light
             properties:
@@ -1360,5 +1297,50 @@ components:
                 type: string
                 pattern: '^\d{3}:\d{3}:\d{3}$'
                 description: RGB color value (e.g., 255:000:000 for red)
+
+    VacuumCleanerCommandRequest:
+      description: |
+        Applies to:
+        * Robot Vacuum Cleaner S1
+        * Robot Vacuum Cleaner S1 Plus
+        * Mini Robot Vacuum K10+
+        * Mini Robot Vacuum K10 Pro
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Starts the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [start]
+          - type: object
+            description: Stops the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [stop]
+          - type: object
+            description: Docks the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [dock]
+          - type: object
+            description: Sets the suction power level of the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [setPowLevel]
+              parameter:
+                type: integer
+                minimum: 0
+                maximum: 3
+                description: |
+                  Suction power level
+                  * 0: Quiet
+                  * 1: Standard
+                  * 2: Strong
+                  * 3: Max
 
 

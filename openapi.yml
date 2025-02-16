@@ -1343,4 +1343,187 @@ components:
                   * 2: Strong
                   * 3: Max
 
+    K10ProComboCommandRequest:
+      description: Applies to K10+ Pro Combo devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Starts cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [startClean]
+              parameter:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    enum: [sweep, mop]
+                    description: Cleaning mode
+                  param:
+                    type: object
+                    properties:
+                      fanLevel:
+                        type: integer
+                        minimum: 1
+                        maximum: 4
+                        description: Vacuum power level
+                      times:
+                        type: integer
+                        minimum: 1
+                        maximum: 2639999
+                        description: Number of cleaning cycles
+          - type: object
+            description: Pauses cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [pause]
+          - type: object
+            description: Makes the vacuum cleaner return to the charging base
+            properties:
+              commandType:
+                type: string
+                enum: [dock]
+          - type: object
+            description: Sets the volume
+            properties:
+              commandType:
+                type: string
+                enum: [setVolume]
+              parameter:
+                type: integer
+                minimum: 0
+                maximum: 100
+                description: Volume level (0-100)
+          - type: object
+            description: Changes a parameter
+            properties:
+              commandType:
+                type: string
+                enum: [changeParam]
+              parameter:
+                type: object
+                properties:
+                  times:
+                    type: integer
+                    minimum: 1
+                    maximum: 2639999
+                    description: Number of cleaning cycles
+                  fanLevel:
+                    type: integer
+                    minimum: 1
+                    maximum: 4
+                    description: Vacuum power level
+                  waterLevel:
+                    type: integer
+                    minimum: 1
+                    maximum: 2
+                    description: Mop moisture level
 
+
+    S10CommandRequest:
+      description: Applies to Floor Cleaning Robot S10 devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Starts cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [startClean]
+              parameter:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    enum: [sweep, sweep_mop]
+                    description: Cleaning mode
+                  param:
+                    type: object
+                    properties:
+                      fanLevel:
+                        type: integer
+                        minimum: 1
+                        maximum: 4
+                        description: Vacuum power level
+                      times:
+                        type: integer
+                        minimum: 1
+                        maximum: 2639999
+                        description: Number of cleaning cycles
+                      waterLevel:
+                        type: integer
+                        minimum: 1
+                        maximum: 2
+                        description: Mop moisture level
+          - type: object
+            description: Refill the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [addWaterForHumi]
+          - type: object
+            description: Pauses cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [pause]
+          - type: object
+            description: Makes the vacuum cleaner return to the charging base
+            properties:
+              commandType:
+                type: string
+                enum: [dock]
+          - type: object
+            description: Sets the volume
+            properties:
+              commandType:
+                type: string
+                enum: [setVolume]
+              parameter:
+                type: integer
+                minimum: 0
+                maximum: 100
+                description: Volume level (0-100)
+          - type: object
+            description: 
+            properties:
+              description: Starts self-cleaning
+              commandType:
+                type: string
+                enum: [selfClean]
+              parameter:
+                type: integer
+                minimum: 1
+                maximum: 3
+                description: |
+                  * 1: wash the mop
+                  * 2: dry itself
+                  * 3: terminate self-cleaning
+          - type: object
+            description: Changes a parameter
+            properties:
+              commandType:
+                type: string
+                enum: [changeParam]
+              parameter:
+                type: object
+                properties:
+                  times:
+                    type: integer
+                    minimum: 1
+                    maximum: 2639999
+                    description: Number of cleaning cycles
+                  fanLevel:
+                    type: integer
+                    minimum: 1
+                    maximum: 4
+                    description: Vacuum power level
+                  waterLevel:
+                    type: integer
+                    minimum: 1
+                    maximum: 2
+                    description: Mop moisture level

@@ -1014,19 +1014,19 @@ components:
             properties:
               commandType:
                 type: string
-                enum: turnOff
+                enum: [turnOff]
           - type: object
             description: Opens the curtain
             properties:
               commandType:
                 type: string
-                enum: turnOn
+                enum: [turnOn]
           - type: object
             description: Pauses the curtain movement
             properties:
               commandType:
                 type: string
-                enum: pause
+                enum: [pause]
           - type: object
             description: Precisely sets the curtain position
             properties:

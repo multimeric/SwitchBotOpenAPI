@@ -954,3 +954,651 @@ components:
                 * 0: off
                 * 1: on
               enum: [0, 1]
+
+    # Entities for the /commands endpoint
+
+    CommandRequest:
+      description: Provides default properties for all command requests
+      type: object
+      properties:
+        commandType:
+          type: string
+          enum: [command]
+        parameter:
+          type: string
+          enum: [default]
+
+    TurnOnOffCommand:
+      type: object
+      oneOf:
+        - type: object
+          description: Turns on the device
+          properties:
+            commandType:
+              type: string
+              enum: [turnOn]
+        - type: object
+          description: Turns off the device
+          properties:
+            commandType:
+              type: string
+              enum: [turnOff]
+
+    ToggleCommand:
+      type: object
+      description: Toggles the device on or off
+      properties:
+        commandType:
+          type: string
+          enum: [toggle]
+
+    BotCommandRequest:
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Presses the device
+            properties:
+              commandType:
+                type: string
+                enum: [press]
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+
+    CurtainCommandRequest:
+      description: Applies to Curtain and Curtain3 devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Closes the curtain
+            properties:
+              commandType:
+                type: string
+                enum: [turnOff]
+          - type: object
+            description: Opens the curtain
+            properties:
+              commandType:
+                type: string
+                enum: [turnOn]
+          - type: object
+            description: Pauses the curtain movement
+            properties:
+              commandType:
+                type: string
+                enum: [pause]
+          - type: object
+            description: Precisely sets the curtain position
+            properties:
+              commandType:
+                type: string
+                enum: [setPosition]
+              parameter:
+                type: string
+                pattern: '(\d+),(0|1|ff),\d{1,3}'
+                description: |
+                  Three comma-separated values:
+                  * Index. Unsure what this means. Leave it as 0.
+                  * Mode:
+                    * 0: performance
+                    * 1: silent
+                    * ff: default
+                  * Position in the range of 0-100, where 0 is open and 100 is closed.
+
+    LockCommandRequest:
+      description: Applies to Lock and Lock Pro devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Locks the device
+            properties:
+              commandType:
+                type: string
+                enum: [lock]
+          - type: object
+            description: Unlocks the device
+            properties:
+              commandType:
+                type: string
+                enum: [unlock]
+
+    HumidifierCommandRequest:
+      description: Applies to Humidifier devices but not Evaporative Humidifiers
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - type: object
+            description: Sets the mode of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: string
+                pattern: 'auto|(\d+)'
+                description: |
+                  Mode of the humidifier:
+                  * auto: Automatic mode
+                  * 0-100: Set atomization efficiency to the specified percentage.
+                  * 101: set atomization efficiency to 34%
+                  * 102: set atomization efficiency to 67%
+                  * 103: set atomization efficiency to 100%
+
+    EvaporativeHumidifierCommandRequest:
+      description: Applies to Evaporative Humidifier devices aka Humidifier2
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - type: object
+            description: Enables or disables the child lock of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setChildLock]
+              parameter:
+                type: boolean
+          - type: object
+            description: Sets the mode of the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: object
+                properties:
+                  mode:
+                    type: integer
+                    enum: [1, 2, 3, 4, 5, 6, 7, 8]
+                    description: |
+                      Humidifier mode.
+                      * 1: Level 4
+                      * 2: Level 3
+                      * 3: Level 2
+                      * 4: Level 1
+                      * 5: Humidity mode
+                      * 6: Sleep mode
+                      * 7: Auto mode
+                      * 8: Drying mode
+                  targetHumidity:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+
+    AirPurifierCommandRequest:
+      description: |
+        Applies to:
+        * Air Purifier VOC 
+        * Air Purifier Table VOC
+        * Air Purifier PM2.5
+        * Air Purifier Table PM2.5
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - type: object
+            description: Enables or disables the child lock of the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [setChildLock]
+              parameter:
+                type: integer
+                enum: [0, 1]
+                description: |
+                  * 0: disable child lock
+                  * 1: enable child lock
+          - type: object
+            description: Sets the mode of the air purifier
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: object
+                properties:
+                  mode:
+                    type: integer
+                    enum: [1, 2, 3, 4]
+                    description: |
+                      Air purifier mode.
+                      * 1: Normal or fan
+                      * 2: Auto
+                      * 3: Sleep
+                      * 4: Pet
+                  fanGear:
+                    type: integer
+                    minimum: 1
+                    maximum: 3
+                    description: Fan speed. Can only be set when mode is 1.
+
+    PlugCommandRequest:
+      description: Applies to Plug devices but not Plug Mini devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - $ref: '#/components/schemas/TurnOnOffCommand'
+
+    PlugMiniCommandRequest:
+      description: Applies to Plug Mini devices, both US and JP versions
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - $ref: '#/components/schemas/ToggleCommand'
+
+    RelaySwitchCommandRequest:
+      description: Applies to Relay Switch 1 and 1PM devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - $ref: '#/components/schemas/ToggleCommand'
+          - type: object
+            description: Sets the mode of the relay switch
+            properties:
+              commandType:
+                type: string
+                enum: [setMode]
+              parameter:
+                type: integer
+                enum: [0, 1, 2, 3]
+                description: |
+                  * 0: toggle mode
+                  * 1: edge switch mode
+                  * 2: detached switch mode
+                  * 3: momentary switch mode
+
+    SetBrightnessCommand:
+      type: object
+      description: Sets the brightness of the device
+      properties:
+        commandType:
+          type: string
+          enum: [setBrightness]
+        parameter:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Brightness level
+
+    SetColorTemperatureCommand:
+      type: object
+      description: Sets the color temperature of the device
+      properties:
+        commandType:
+          type: string
+          enum: [setColorTemperature]
+        parameter:
+          type: integer
+          minimum: 2700
+          maximum: 6500
+          description: Color temperature (2700-6500)
+
+    SetColorCommand:
+      type: object
+      description: Sets the color emitted by the device
+      properties:
+        commandType:
+          type: string
+          enum: [setColor]
+        parameter:
+          type: string
+          pattern: '^\d{3}:\d{3}:\d{3}$'
+          description: RGB color value (e.g., 255:000:000 for red)
+
+    ColorBulbCommandRequest:
+      description: Applies to Color Bulb devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+            - $ref: '#/components/schemas/TurnOnOffCommand'
+            - $ref: '#/components/schemas/ToggleCommand'
+            - $ref: '#/components/schemas/SetColorTemperatureCommand'
+            - $ref: '#/components/schemas/SetBrightnessCommand'
+            - $ref: '#/components/schemas/SetColorCommand'
+
+    StripLightCommandRequest:
+      description: Applies to Strip Light devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/CommandRequest'
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - $ref: '#/components/schemas/ToggleCommand'
+          - $ref: '#/components/schemas/SetBrightnessCommand'
+          - $ref: '#/components/schemas/SetColorCommand'
+
+    VacuumCleanerCommandRequest:
+      description: |
+        Applies to:
+        * Robot Vacuum Cleaner S1
+        * Robot Vacuum Cleaner S1 Plus
+        * Mini Robot Vacuum K10+
+        * Mini Robot Vacuum K10 Pro
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Starts the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [start]
+          - type: object
+            description: Stops the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [stop]
+          - type: object
+            description: Docks the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [dock]
+          - type: object
+            description: Sets the suction power level of the vacuum cleaner
+            properties:
+              commandType:
+                type: string
+                enum: [setPowLevel]
+              parameter:
+                type: integer
+                minimum: 0
+                maximum: 3
+                description: |
+                  Suction power level
+                  * 0: Quiet
+                  * 1: Standard
+                  * 2: Strong
+                  * 3: Max
+
+    VacuumParamsObject:
+      type: object
+      properties:
+        fanLevel:
+          type: integer
+          minimum: 1
+          maximum: 4
+          description: Vacuum power level
+        times:
+          type: integer
+          minimum: 1
+          maximum: 2639999
+          description: Number of cleaning cycles
+
+    VacuumMopParamsObject:
+      allOf:
+        - $ref: '#/components/schemas/VacuumParamsObject'
+        - type: object
+          properties:
+            waterLevel:
+              type: integer
+              minimum: 1
+              maximum: 2
+              description: Mop moisture level
+
+    K10S10SharedCommands:
+      oneOf:
+        - type: object
+          description: Pauses cleaning
+          properties:
+            commandType:
+              type: string
+              enum: [pause]
+        - type: object
+          description: Makes the vacuum cleaner return to the charging base
+          properties:
+            commandType:
+              type: string
+              enum: [dock]
+        - type: object
+          description: Sets the volume
+          properties:
+            commandType:
+              type: string
+              enum: [setVolume]
+            parameter:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Volume level (0-100)
+
+    K10ProComboCommandRequest:
+      description: Applies to K10+ Pro Combo devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/K10S10SharedCommands'
+          - type: object
+            description: Starts cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [startClean]
+              parameter:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    enum: [sweep, mop]
+                    description: Cleaning mode
+                  param:
+                    $ref: '#/components/schemas/VacuumParamsObject'
+          - type: object
+            description: Changes a parameter
+            properties:
+              commandType:
+                type: string
+                enum: [changeParam]
+              parameter:
+                $ref: '#/components/schemas/VacuumMopParamsObject'
+
+    S10CommandRequest:
+      description: Applies to Floor Cleaning Robot S10 devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/K10S10SharedCommands'
+          - type: object
+            description: Starts cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [startClean]
+              parameter:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    enum: [sweep, sweep_mop]
+                    description: Cleaning mode
+                  param:
+                    $ref: '#/components/schemas/VacuumMopParamsObject'
+          - type: object
+            description: Refill the humidifier
+            properties:
+              commandType:
+                type: string
+                enum: [addWaterForHumi]
+          - type: object
+            description: Starts self-cleaning
+            properties:
+              commandType:
+                type: string
+                enum: [selfClean]
+              parameter:
+                type: integer
+                minimum: 1
+                maximum: 3
+                description: |
+                  * 1: wash the mop
+                  * 2: dry itself
+                  * 3: terminate self-cleaning
+          - type: object
+            description: Changes a parameter
+            properties:
+              commandType:
+                type: string
+                enum: [changeParam]
+              parameter:
+                $ref: '#/components/schemas/VacuumMopParamsObject'
+
+    CeilingLightCommandRequest:
+      description: Applies to Ceiling Light and Ceiling Light Pro devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - $ref: '#/components/schemas/ToggleCommand'
+          - $ref: '#/components/schemas/SetBrightnessCommand'
+          - $ref: '#/components/schemas/SetColorTemperatureCommand'
+
+    KeyPadCommandRequest:
+      description: Applies to Keypad and Keypad Touch devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Creates a new passcode
+            properties:
+              commandType:
+                type: string
+                enum: [createKey]
+              parameter:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Unique name for the passcode
+                  type:
+                    type: string
+                    enum: [permanent, timeLimit, disposable, urgent]
+                    description: |
+                      Type of the passcode:
+                      * permanent: a permanent passcode
+                      * timeLimit: a temporary passcode
+                      * disposable: a one-time passcode
+                      * urgent: an emergency passcode
+                  password:
+                    type: string
+                    minLength: 6
+                    maxLength: 12
+                    description: Passcode in plain text
+                  startTime:
+                    type: integer
+                    description: When the passcode becomes valid, as a 10-digit Unix timestamp
+                  endTime:
+                    type: integer
+                    description: When the passcode expires, as a 10-digit Unix timestamp
+          - type: object
+            description: Deletes a passcode
+            properties:
+              commandType:
+                type: string
+                enum: [deleteKey]
+              parameter:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the passcode to delete
+
+    BlindTiltCommandRequest:
+      description: Applies to Blind Tilt devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - type: object
+            description: Sets the tilt direction of the blind
+            properties:
+              commandType:
+                type: string
+                enum: [setPosition]
+              parameter:
+                type: string
+                description: |
+                  A string in the form of "{direction}{position}" where:
+                  * direction is either "up" or "down"
+                  * position is an integer in the range 0-100, where 0 means closed and 100 means open. Must be set to a multiple of 2.
+                pattern: '(up|down)(\d{1,3})'
+          - type: object
+            description: Fully opens the blind
+            properties:
+              commandType:
+                type: string
+                enum: [fullyOpen]
+          - type: object
+            description: Sets the blind to be fully closed and in the up position
+            properties:
+              commandType:
+                type: string
+                enum: [closeUp]
+          - type: object
+            description: Sets the blind to be fully closed and in the down position
+            properties:
+              commandType:
+                type: string
+                enum: [closeDown]
+
+    RollerShadeCommandRequest:
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - type: object
+          description: Sets the position of the roller shade
+          properties:
+            commandType:
+              type: string
+              enum: [setPosition]
+            parameter:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Position of the roller shade
+
+    CirculatorFanCommandRequest:
+      description: Applies to Circulator Fan and Battery Circulator Fan devices
+      allOf:
+        - $ref: '#/components/schemas/CommandRequest'
+        - oneOf:
+          - $ref: '#/components/schemas/TurnOnOffCommand'
+          - type: object
+            description: Adjusts the brightness of the night light
+            properties:
+              commandType:
+                type: string
+                enum: [setNightLightMode]
+              parameter:
+                type: string
+                description: |
+                  * off: off
+                  * 1: bright
+                  * 2: dim
+                enum: [off, '1', '2']
+          - type: object
+            description: Sets the fan mode
+            properties:
+              commandType:
+                type: string
+                enum: [setWindMode]
+              parameter:
+                type: string
+                enum: [direct, natural, sleep, baby]
+                description: |
+                  * direct: Direct
+                  * natural: Natural
+                  * sleep: Sleep
+                  * baby: Ultra quiet
+          - type: object
+            description: Sets the speed of the fan
+            properties:
+              commandType:
+                type: string
+                enum: [setWindSpeed]
+              parameter:
+                description: Fan speed
+                type: integer
+                minimum: 1
+                maximum: 100
